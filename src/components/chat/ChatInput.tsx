@@ -35,7 +35,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyPress={handleKeyPress}
-        placeholder="Type your message here..."
+        placeholder="Share your thoughts or feelings..."
         disabled={isLoading}
         className="flex-1 bg-input border-border focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-0 transition-all duration-200"
       />

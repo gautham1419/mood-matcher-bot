@@ -47,7 +47,9 @@ export const ChatContainer = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
+        mode: 'cors',
         body: JSON.stringify({ text: messageText }),
       });
 
@@ -69,13 +71,13 @@ export const ChatContainer = () => {
       console.error('Error sending message:', error);
       toast({
         title: "Connection Error",
-        description: "Failed to connect to the mood detection service. Please try again.",
+        description: "Failed to connect to the Malayalam quote service. Please check if the backend is running.",
         variant: "destructive",
       });
 
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Sorry, I'm having trouble connecting right now. Please try again later.",
+        text: "Sorry, I can't reach the movie quote database right now. Please try again later.",
         isUser: false,
         timestamp: new Date(),
       };
@@ -96,8 +98,8 @@ export const ChatContainer = () => {
             <Sparkles className="h-4 w-4 text-primary absolute -top-1 -right-1 animate-pulse" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-foreground">Mood Matcher</h1>
-            <p className="text-sm text-muted-foreground">AI-powered emotion detection</p>
+            <h1 className="text-xl font-bold text-foreground">മലയാളം Quote Bot</h1>
+            <p className="text-sm text-muted-foreground">Famous Malayalam movie dialogues based on your emotions</p>
           </div>
         </div>
       </div>
@@ -108,8 +110,8 @@ export const ChatContainer = () => {
           {messages.length === 0 && (
             <div className="text-center py-12 animate-slide-up">
               <Brain className="h-16 w-16 text-primary mx-auto mb-4 opacity-50" />
-              <h2 className="text-lg font-semibold text-foreground mb-2">Welcome to Mood Matcher!</h2>
-              <p className="text-muted-foreground">Share your thoughts and I'll detect the emotion behind them.</p>
+              <h2 className="text-lg font-semibold text-foreground mb-2">Welcome to മലയാളം Quote Bot!</h2>
+              <p className="text-muted-foreground">Share your feelings and I'll respond with a famous Malayalam movie dialogue!</p>
             </div>
           )}
           {messages.map((message) => (
@@ -129,7 +131,7 @@ export const ChatContainer = () => {
                     <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                     <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
-                  <span className="text-sm text-muted-foreground">Analyzing mood...</span>
+                  <span className="text-sm text-muted-foreground">Finding the perfect quote...</span>
                 </div>
               </div>
             </div>
