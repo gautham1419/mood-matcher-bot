@@ -29,7 +29,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   return (
     <form 
       onSubmit={handleSubmit} 
-      className="flex items-center gap-2 p-4 bg-card border-t border-border"
+      className="flex items-center gap-2 px-4 py-3 bg-card border-t border-border"
     >
       <Input
         value={message}
@@ -37,13 +37,13 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
         onKeyPress={handleKeyPress}
         placeholder="Share your thoughts or feelings..."
         disabled={isLoading}
-        className="flex-1 bg-input border-border focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-0 transition-all duration-200"
+        className="flex-1 bg-input border-border focus-visible:ring-ring focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors"
       />
       <Button 
         type="submit" 
         size="icon"
         disabled={!message.trim() || isLoading}
-        className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
+        className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow-md transition-colors"
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
