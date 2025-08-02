@@ -4,6 +4,7 @@ import { ChatInput } from "./ChatInput";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { Brain, Sparkles } from "lucide-react";
+import { getCelebrityResponse } from "@/services/celebrityDataset";
 
 interface Message {
   id: string;
@@ -115,25 +116,35 @@ export const ChatContainer = () => {
     // Check if we have a direct mapping for this input
     const directMatch = emotionMap[cleanText];
     if (directMatch) {
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: directMatch,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, userMessage, botMessage]);
-      return;
+      const celebrityResponse = getCelebrityResponse(directMatch);
+      
+      if (celebrityResponse) {
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: celebrityResponse.text,
+          isUser: false,
+          timestamp: new Date(),
+          imageUrl: celebrityResponse.image,
+          audioUrl: celebrityResponse.audio,
+          celebrity: celebrityResponse.celebrity,
+          emotion: celebrityResponse.emotion,
+        };
+        setMessages(prev => [...prev, userMessage, botMessage]);
+        return;
+      }
     }
 
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch('https://92cfd4f21a1f.ngrok-free.app/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
         },
+        mode: 'cors',
         body: JSON.stringify({ text: cleanText }),
       });
 
@@ -146,15 +157,34 @@ export const ChatContainer = () => {
       const data = await response.json();
       console.log('API Response:', data); // Debug log
       
+      // Extract the predicted emotion from the response
+      const predictedEmotion = data.prediction || data.predicted_emotion;
+      
+      // Get celebrity response for this emotion
+      const celebrityResponse = getCelebrityResponse(predictedEmotion);
+      
+      if (!celebrityResponse) {
+        // Fallback if emotion not found in dataset
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: `I detected the emotion "${predictedEmotion}" but don't have a Malayalam quote for it yet.`,
+          isUser: false,
+          timestamp: new Date(),
+          emotion: predictedEmotion,
+        };
+        setMessages(prev => [...prev, botMessage]);
+        return;
+      }
+      
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: data.dialogue_text || 'No response',
+        text: celebrityResponse.text,
         isUser: false,
         timestamp: new Date(),
-        imageUrl: data.image_url,
-        audioUrl: data.audio_url,
-        celebrity: data.celebrity,
-        emotion: data.predicted_emotion,
+        imageUrl: celebrityResponse.image,
+        audioUrl: celebrityResponse.audio,
+        celebrity: celebrityResponse.celebrity,
+        emotion: celebrityResponse.emotion,
       };
 
       setMessages(prev => [...prev, botMessage]);
